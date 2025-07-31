@@ -8,13 +8,12 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// GET /api/products → List all products (with optional pagination)
-app.get("/api/products", (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20;
-  const offset = (page - 1) * limit;
+// Mount departments route
+const departmentsRoute = require("./routes/departments");
+app.use("/api/departments", departmentsRoute);
 
- app.get('/products', (req, res) => {
+// GET /api/products - list all products with department name
+app.get("/api/products", (req, res) => {
   db.all(`
     SELECT products.*, departments.name AS department_name
     FROM products
@@ -27,9 +26,7 @@ app.get("/api/products", (req, res) => {
   });
 });
 
-});
-
-// GET /api/products/:id → Get single product by ID
+// GET /api/products/:id - get product by ID
 app.get("/api/products/:id", (req, res) => {
   const productId = req.params.id;
 
@@ -48,4 +45,3 @@ app.get("/api/products/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 API Server running on http://localhost:${PORT}`);
 });
- 
