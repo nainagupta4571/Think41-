@@ -14,16 +14,19 @@ app.get("/api/products", (req, res) => {
   const limit = parseInt(req.query.limit) || 20;
   const offset = (page - 1) * limit;
 
-  db.all(
-    "SELECT * FROM products LIMIT ? OFFSET ?",
-    [limit, offset],
-    (err, rows) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(200).json(rows);
+ app.get('/products', (req, res) => {
+  db.all(`
+    SELECT products.*, departments.name AS department_name
+    FROM products
+    LEFT JOIN departments ON products.department_id = departments.id
+  `, (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-  );
+    res.json(rows);
+  });
+});
+
 });
 
 // GET /api/products/:id → Get single product by ID
@@ -45,3 +48,4 @@ app.get("/api/products/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 API Server running on http://localhost:${PORT}`);
 });
+ 
